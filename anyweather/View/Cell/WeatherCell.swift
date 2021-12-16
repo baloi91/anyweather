@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct WeatherCell: View {
-    @State var forecastInfo: WeatherForecast
+    @State var forecastInfo: WFDisplayData
     
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
                 Text("Date: \(forecastInfo.date)")
-                Text("Average Temporature: \(forecastInfo.temp.average)°C")
+                Text("Average Temporature: \(forecastInfo.temporature)°C")
                 Text("Pressure: \(forecastInfo.pressure)")
                 Text("Humidity: \(forecastInfo.humidity)%")
-                Text("Description: \(forecastInfo.weather.first!.description)")
+                Text("Description: \(forecastInfo.description)")
             }
             .padding()
             Spacer()
-            CachedImage(imageName: forecastInfo.weather.first!.icon)
+            CachedImage(imageName: forecastInfo.image)
                 .frame(width: 60, height: 60)
                 .padding(.horizontal, 20)
         }
@@ -30,6 +30,6 @@ struct WeatherCell: View {
 
 struct WeatherCell_Previews: PreviewProvider {
     static var previews: some View {
-        WeatherCell(forecastInfo: SampleData.sampleWeatherForecast)
+        WeatherCell(forecastInfo: SampleData.sampleDisplayRecord)
     }
 }

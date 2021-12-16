@@ -12,6 +12,7 @@ typealias APICallCompletion = (_ success: Bool, _ responseObject: Any?) -> Void
 enum APIError: Error {
     case invalidJson
     case networkIssue
+    case invalidCityName
 }
 
 protocol SessionManagerProtocol {
@@ -26,7 +27,7 @@ class SessionManager: SessionManagerProtocol {
         
         AF.request(APIEndpoint.baseUrl, parameters: params.dictionary)
             .validate()
-            .responseData(completionHandler: { response in
+            .responseData(queue: .global(), completionHandler: { response in
                 switch response.result {
                 case .success(let data):
                     do {
@@ -37,8 +38,12 @@ class SessionManager: SessionManagerProtocol {
                         completionHandler(false, APIError.invalidJson)
                     }
                     
-                case .failure:
-                    completionHandler(false, APIError.networkIssue)
+                case .failure(let error):
+                    if (error.responseCode == 404) {
+                        completionHandler(false, APIError.invalidCityName)
+                    } else {
+                        completionHandler(false, APIError.networkIssue)
+                    }
                 }
             })
     }

@@ -10,9 +10,10 @@ import SwiftUI
 import Combine
 
 final class WeatherViewModel: ObservableObject {
-    @Published var weatherForcasts: [WeatherForecast] = []
     @Published var searchText: String = ""
-    @Published var error: APIError?
+    @Published var note: String = ""
+    @Published var forecastRecords: [WFDisplayData] = []
+    var error: APIError?
     private var disposeBag = Set<AnyCancellable>()
     private var sessionManager: SessionManagerProtocol
     
@@ -22,7 +23,7 @@ final class WeatherViewModel: ObservableObject {
             .debounce(for: 1.5,
                          scheduler: RunLoop.main)
             .sink(receiveValue: { value in
-                self.weatherForcasts = []
+                self.forecastRecords = []
                 if value.count > 2 {
                     self.fetchForecasts(query: value)
                 }
@@ -34,30 +35,54 @@ final class WeatherViewModel: ObservableObject {
         let params = WeatherParams(query: query)
         sessionManager.getWeatherData(params: params,
                                              completionHandler: { success, response in
-            if success {
-                let result = response as! WeatherResponse
-                self.weatherForcasts = result.list
-                self.error = nil
-            } else {
-                self.error = (response as! APIError)
+            DispatchQueue.main.async {
+                if success {
+                    let result = response as! WeatherResponse
+                    let weatherForecasts = result.list
+                    let tempRecords = weatherForecasts.map({ self.transformData(forecast: $0) })
+                    self.forecastRecords = tempRecords
+                    self.error = nil
+                } else {
+                    self.error = (response as! APIError)
+                }
+                self.updateNote()
             }
         })
     }
     
+    func transformData(forecast: WeatherForecast) -> WFDisplayData {
+        return WFDisplayData(
+            date: AppFormatter.formatIntToDate(forecast.date),
+            temporature: AppFormatter.formatTemporature(forecast.temp.average),
+            pressure: "\(forecast.pressure)",
+            humidity: "\(forecast.humidity)",
+            image: "\(forecast.weather.first?.icon ?? "10d")",
+            description: "\(forecast.weather.first?.description ?? "N/A")"
+        )
+    }
+    
     func clearResult() {
-        weatherForcasts = []
+        forecastRecords = []
+        searchText = ""
+        note = ""
     }
     
-    func formatTemporature(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        let temp = formatter.string(for: "\(value)")
-        return temp ?? ""
-    }
-    
-    func formatDate(_ value: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .full
-        return formatter.string(from: Date(timeIntervalSince1970: TimeInterval(value)))
+    func updateNote() {
+        if error == nil && forecastRecords.isEmpty {
+            note = "Please input a valid city name"
+        } else if error != nil {
+            switch error {
+            case .invalidCityName:
+                note = "This city is not exist."
+            case .networkIssue:
+                note = "There was a network issue while fetching data."
+            case .invalidJson:
+                note = "There was an issue with the server data."
+            default:
+                note = ""
+            }
+        } else {
+            note = ""
+        }
     }
 }

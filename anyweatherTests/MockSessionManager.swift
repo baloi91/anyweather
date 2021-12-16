@@ -6,16 +6,17 @@
 //
 
 import Foundation
-@testable import anyweather
+@testable import Any_Weather
 
 final class MockSessionManager: SessionManagerProtocol {
-    var stub: [WeatherForecast] = []
+    var stub: WeatherResponse?
     var error: APIError?
     
     func getWeatherData(params: WeatherParams, completionHandler: @escaping APICallCompletion) {
         if let error = error {
             completionHandler(false, error)
+        } else {
+            completionHandler(true, stub)
         }
-        completionHandler(true, stub)
     }
 }

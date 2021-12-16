@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct SearchBar: View {
-    @Binding var searchText: String
- 
+    @ObservedObject var viewModel: WeatherViewModel
     @State private var isEditing = false
  
     var body: some View {
         HStack {
-            TextField("Search ...", text: $searchText)
+            TextField("Search ...", text: $viewModel.searchText)
                 .padding(7)
                 .padding(.horizontal, 25)
                 .background(Color(.systemGray6))
@@ -32,7 +31,8 @@ struct SearchBar: View {
                         
                         if isEditing {
                             Button(action: {
-                                self.searchText = ""
+                                isEditing = false
+                                viewModel.clearResult()
                             }) {
                                 Image(systemName: "multiply.circle.fill")
                                     .foregroundColor(.gray)
@@ -43,7 +43,7 @@ struct SearchBar: View {
                 )
             Button(action: {
                 self.isEditing = false
-                self.searchText = ""
+                viewModel.clearResult()
             }) {
                 Text("Cancel")
             }

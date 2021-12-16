@@ -26,3 +26,7 @@ struct Temporature: Codable {
         return [day, min, max, night, eve, morn].reduce(0, +)/6
     }
 }
+
+struct WFDisplayData {
+    let date, temporature, pressure, humidity, image, description: String
+}

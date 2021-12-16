@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import anyweather
+@testable import Any_Weather
 
 class WeatherViewModelTests: XCTestCase {
     var viewModel: WeatherViewModel!
@@ -18,17 +18,26 @@ class WeatherViewModelTests: XCTestCase {
     }
     
     func test_fetchSuccessData() {
-        mockSessionManager.stub = [SampleData.sampleWeatherForecast]
+        mockSessionManager.error = nil
+        mockSessionManager.stub = SampleData.sampleWeatherResponse
         viewModel.fetchForecasts(query: "saigon")
-        XCTAssertTrue(!viewModel.weatherForcasts.isEmpty)
+        XCTAssertTrue(!viewModel.forecastRecords.isEmpty)
         XCTAssertNil(viewModel.error)
     }
     
     func test_fetchErrorWhenQueryRandomString() {
-        mockSessionManager.stub = []
+        mockSessionManager.stub = nil
         mockSessionManager.error = .networkIssue
         viewModel.fetchForecasts(query: "equwh")
-        XCTAssertTrue(viewModel.weatherForcasts.isEmpty)
+        XCTAssertTrue(viewModel.forecastRecords.isEmpty)
         XCTAssertNotNil(viewModel.error)
+    }
+    
+    func test_transformOutputNotNil() {
+        
+    }
+    
+    func test_valueResetSuccessful() {
+        
     }
 }
