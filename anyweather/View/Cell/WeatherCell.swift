@@ -14,16 +14,16 @@ struct WeatherCell: View {
         HStack {
             VStack(alignment: .leading) {
                 Text("Date: \(forecastInfo.date)")
-                Text("Average Temporature: \(forecastInfo.temp.average())°C")
+                Text("Average Temporature: \(forecastInfo.temp.average)°C")
                 Text("Pressure: \(forecastInfo.pressure)")
                 Text("Humidity: \(forecastInfo.humidity)%")
                 Text("Description: \(forecastInfo.weather.first!.description)")
             }
-            Image(systemName: ImageConstant.sun)
-                .resizable()
-                .scaledToFit()
+            .padding()
+            Spacer()
+            CachedImage(imageName: forecastInfo.weather.first!.icon)
                 .frame(width: 60, height: 60)
-                .padding(.leading, 20)
+                .padding(.horizontal, 20)
         }
     }
 }

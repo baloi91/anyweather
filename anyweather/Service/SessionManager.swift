@@ -14,26 +14,30 @@ enum APIError: Error {
     case networkIssue
 }
 
-class SessionManager {
-    static let shared: SessionManager = {
-        let instance = SessionManager()
-        return instance
-    }()
-    
-    func getWeatherData(params: [String: Any], completionHandler: @escaping APICallCompletion) {
-        AF.request(APIEndpoint.baseUrl, parameters: params)
+protocol SessionManagerProtocol {
+    func getWeatherData(params: WeatherParams, completionHandler: @escaping APICallCompletion)
+}
+
+class SessionManager: SessionManagerProtocol {
+    func getWeatherData(params: WeatherParams, completionHandler: @escaping APICallCompletion) {
+        if let cacheResponse = CachingService.shared.getCacheData(for: params.query) {
+            completionHandler(true, cacheResponse)
+        }
+        
+        AF.request(APIEndpoint.baseUrl, parameters: params.dictionary)
             .validate()
             .responseData(completionHandler: { response in
                 switch response.result {
                 case .success(let data):
                     do {
                         let weatherResponse = try JSONDecoder().decode(WeatherResponse.self, from: data)
+                        CachingService.shared.saveCacheData(for: params.query, value: weatherResponse)
                         completionHandler(true, weatherResponse)
                     } catch {
                         completionHandler(false, APIError.invalidJson)
                     }
                     
-                case .failure(let error):
+                case .failure:
                     completionHandler(false, APIError.networkIssue)
                 }
             })

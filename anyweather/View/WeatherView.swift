@@ -17,6 +17,7 @@ struct WeatherView: View {
                 List(viewModel.weatherForcasts, id: \.date) { forecastInfo in
                     WeatherCell(forecastInfo: forecastInfo)
                 }
+                Spacer()
             }
                 .navigationBarTitle("Weather Forecast", displayMode: .inline)
         }

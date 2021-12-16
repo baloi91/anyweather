@@ -12,16 +12,40 @@ import Combine
 final class WeatherViewModel: ObservableObject {
     @Published var weatherForcasts: [WeatherForecast] = []
     @Published var searchText: String = ""
+    @Published var error: APIError?
     private var disposeBag = Set<AnyCancellable>()
+    private var sessionManager: SessionManagerProtocol
     
-    init() {
+    init(sessionManager: SessionManagerProtocol = SessionManager()) {
+        self.sessionManager = sessionManager
         $searchText
-            .debounce(for: 2,
+            .debounce(for: 1.5,
                          scheduler: RunLoop.main)
             .sink(receiveValue: { value in
-                print(value)
+                self.weatherForcasts = []
+                if value.count > 2 {
+                    self.fetchForecasts(query: value)
+                }
             })
             .store(in: &disposeBag)
+    }
+    
+    func fetchForecasts(query: String) {
+        let params = WeatherParams(query: query)
+        sessionManager.getWeatherData(params: params,
+                                             completionHandler: { success, response in
+            if success {
+                let result = response as! WeatherResponse
+                self.weatherForcasts = result.list
+                self.error = nil
+            } else {
+                self.error = (response as! APIError)
+            }
+        })
+    }
+    
+    func clearResult() {
+        weatherForcasts = []
     }
     
     func formatTemporature(_ value: Double) -> String {

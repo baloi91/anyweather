@@ -4,6 +4,7 @@ target 'anyweather' do
   use_frameworks!
 
   pod 'Alamofire', '~> 5.5'
+  pod 'Kingfisher', '~> 7.0'
 
   target 'anyweatherTests' do
     inherit! :search_paths

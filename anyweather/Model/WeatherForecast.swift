@@ -22,7 +22,7 @@ struct WeatherForecast: Codable {
 struct Temporature: Codable {
     let day, min, max, night, eve, morn: Double
     
-    func average() -> Double {
+    var average: Double {
         return [day, min, max, night, eve, morn].reduce(0, +)/6
     }
 }
