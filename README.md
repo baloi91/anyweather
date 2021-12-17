@@ -44,7 +44,7 @@ Then open anyweather.xcworkspace, there a 2 targets: anyweather app and anyweath
 2. Design app's architecture (recommend VIPER or MVP, MVVM but not mandatory) ✓ 
 3. UI should be looks like in attachment. ✓ 
 4. Write UnitTests ✓ 
-5. Acceptance Tests X
+5. Acceptance Tests ✓
 6. Exception handling ✓ 
 7. Caching handling ✓ 
 8. Accessibility for Disability Supports:
