@@ -15,7 +15,7 @@ final class AppFormatter {
     static func formatIntToDate(_ value: Int) -> String {
         let date = Date(timeIntervalSince1970: Double(value))
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy"
+        dateFormatter.dateFormat = "E, d MMM yyyy"
         return dateFormatter.string(from: date)
     }
 }

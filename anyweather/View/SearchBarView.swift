@@ -10,10 +10,10 @@ import SwiftUI
 struct SearchBar: View {
     @ObservedObject var viewModel: WeatherViewModel
     @State private var isEditing = false
- 
+    
     var body: some View {
         HStack {
-            TextField("Search ...", text: $viewModel.searchText)
+            TextField("Input a city name...", text: $viewModel.searchText)
                 .padding(7)
                 .padding(.horizontal, 25)
                 .background(Color(.systemGray6))
@@ -29,7 +29,7 @@ struct SearchBar: View {
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 16)
                         
-                        if isEditing {
+                        if isEditing && !viewModel.searchText.isEmpty {
                             Button(action: {
                                 isEditing = false
                                 viewModel.clearResult()

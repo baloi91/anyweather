@@ -11,11 +11,12 @@ import Combine
 
 final class WeatherViewModel: ObservableObject {
     @Published var searchText: String = ""
-    @Published var note: String = ""
     @Published var forecastRecords: [WFDisplayData] = []
     @Published var showingPopover = false
     @Published var textSize: CGFloat = 14
+    @Published var showToast: Bool = false
     
+    var note: String = ""
     var error: APIError?
     private var disposeBag = Set<AnyCancellable>()
     private var sessionManager: SessionManagerProtocol
@@ -26,7 +27,7 @@ final class WeatherViewModel: ObservableObject {
             .debounce(for: 1.5,
                          scheduler: RunLoop.main)
             .sink(receiveValue: { value in
-                self.forecastRecords = []
+                self.forecastRecords.removeAll()
                 if value.count > 2 {
                     self.fetchForecasts(query: value)
                 }
@@ -37,19 +38,17 @@ final class WeatherViewModel: ObservableObject {
     func fetchForecasts(query: String) {
         let params = WeatherParams(query: query)
         sessionManager.getWeatherData(params: params,
-                                             completionHandler: { success, response in
-            DispatchQueue.main.async {
-                if success {
-                    let result = response as! WeatherResponse
-                    let weatherForecasts = result.list
-                    let tempRecords = weatherForecasts.map({ self.transformData(forecast: $0) })
-                    self.forecastRecords = tempRecords
-                    self.error = nil
-                } else {
-                    self.error = (response as! APIError)
-                }
-                self.updateNote()
+                                      completionHandler: { success, response in
+            if success {
+                let result = response as! WeatherResponse
+                let weatherForecasts = result.list
+                let tempRecords = weatherForecasts.map({ self.transformData(forecast: $0) })
+                self.forecastRecords = tempRecords
+                self.error = nil
+            } else {
+                self.error = (response as! APIError)
             }
+            self.updateNote()
         })
     }
     
@@ -80,9 +79,7 @@ final class WeatherViewModel: ObservableObject {
     }
     
     func updateNote() {
-        if error == nil && forecastRecords.isEmpty {
-            note = "Please input a valid city name"
-        } else if error != nil {
+        if error != nil {
             switch error {
             case .invalidCityName:
                 note = "This city is not exist."
@@ -93,7 +90,9 @@ final class WeatherViewModel: ObservableObject {
             default:
                 note = ""
             }
+            showToast = true
         } else {
+            showToast = false
             note = ""
         }
     }

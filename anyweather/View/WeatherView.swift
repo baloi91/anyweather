@@ -7,6 +7,7 @@
 
 import SwiftUI
 import DYPopoverView
+import AlertToast
 
 struct WeatherView: View {
     @ObservedObject var viewModel: WeatherViewModel
@@ -18,10 +19,12 @@ struct WeatherView: View {
                 SearchBar(viewModel: viewModel)
                 WeatherBodyView(viewModel: viewModel)
             }
-            .navigationBarTitle("Weather Forecast", displayMode: .inline)
-            .onAppear {
-                viewModel.updateNote()
-            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(content: {
+                ToolbarItem(placement: .principal, content: {
+                    Text("Weather Forecast")
+                        .font(Font.headline.weight(.bold))
+                })})
             .navigationBarItems(leading: changeTextSizeBtn)
         }
         .overlay(Color.black.opacity(viewModel.showingPopover ? 0.1 : 0).onTapGesture {
@@ -53,7 +56,7 @@ struct TextSizeSlider: View {
     var body: some View {
         HStack {
             Image(systemName: "minus")
-            Slider(value: $viewModel.textSize, in: 14...22, step: 1)
+            Slider(value: $viewModel.textSize, in: 10...20, step: 1)
                 .accentColor(Color.green)
             Image(systemName: "plus")
         }
@@ -67,26 +70,15 @@ struct WeatherBodyView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            if !viewModel.note.isEmpty {
-                VStack(alignment: .center) {
-                    Text(viewModel.note)
-                        .padding()
-                        .font(.system(size: viewModel.textSize))
-                }
-                .padding()
+            List(viewModel.forecastRecords, id: \.date) { forecastInfo in
+                WeatherCell(forecastInfo: forecastInfo, textSize: $viewModel.textSize)
             }
-            else {
-                ScrollView {
-                    LazyVStack {
-                        ForEach(viewModel.forecastRecords, id: \.date) { forecastInfo in
-                            WeatherCell(forecastInfo: forecastInfo, textSize: $viewModel.textSize)
-                        }
-                    }
-                    .padding(.vertical)
-                    .frame(width: geometry.size.width)
-                }
+            .onAppear {
+                UITableView.appearance().separatorColor = .clear
             }
-            
+        }
+        .toast(isPresenting: $viewModel.showToast){
+            AlertToast(type: .regular, title: viewModel.note)
         }
         .edgesIgnoringSafeArea(.top)
     }
