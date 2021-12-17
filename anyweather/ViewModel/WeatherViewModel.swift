@@ -13,6 +13,9 @@ final class WeatherViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var note: String = ""
     @Published var forecastRecords: [WFDisplayData] = []
+    @Published var showingPopover = false
+    @Published var textSize: CGFloat = 14
+    
     var error: APIError?
     private var disposeBag = Set<AnyCancellable>()
     private var sessionManager: SessionManagerProtocol
@@ -51,13 +54,22 @@ final class WeatherViewModel: ObservableObject {
     }
     
     func transformData(forecast: WeatherForecast) -> WFDisplayData {
+        let dateStr = AppFormatter.formatIntToDate(forecast.date)
+        let temporatureStr = AppFormatter.formatTemporature(forecast.temp.average)
+        let imageStr = forecast.weather.first?.icon ?? "10d"
+        let descriptionStr = forecast.weather.first?.description ?? "N/A"
+        let accessibilityStr = """
+        The weather forecast for \(dateStr): Average temporature is \(temporatureStr)°C, \
+        the pressure is \(forecast.pressure), the humidity is \(forecast.humidity). Looks like the weather today is \(descriptionStr).
+        """
         return WFDisplayData(
-            date: AppFormatter.formatIntToDate(forecast.date),
-            temporature: AppFormatter.formatTemporature(forecast.temp.average),
+            date: dateStr,
+            temporature: temporatureStr,
             pressure: "\(forecast.pressure)",
             humidity: "\(forecast.humidity)",
-            image: "\(forecast.weather.first?.icon ?? "10d")",
-            description: "\(forecast.weather.first?.description ?? "N/A")"
+            image: imageStr,
+            description: descriptionStr,
+            accessibilityDetail: accessibilityStr
         )
     }
     

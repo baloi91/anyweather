@@ -9,27 +9,36 @@ import SwiftUI
 
 struct WeatherCell: View {
     @State var forecastInfo: WFDisplayData
+    @Binding var textSize: CGFloat
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("Date: \(forecastInfo.date)")
-                Text("Average Temporature: \(forecastInfo.temporature)°C")
-                Text("Pressure: \(forecastInfo.pressure)")
-                Text("Humidity: \(forecastInfo.humidity)%")
-                Text("Description: \(forecastInfo.description)")
+        VStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    SText(text: "Date: \(forecastInfo.date)", textSize: $textSize)
+                    SText(text: "Average Temporature: \(forecastInfo.temporature)°C", textSize: $textSize)
+                    SText(text: "Pressure: \(forecastInfo.pressure)", textSize: $textSize)
+                    SText(text: "Humidity: \(forecastInfo.humidity)%", textSize: $textSize)
+                    SText(text: "Description: \(forecastInfo.description)", textSize: $textSize)
+                }
+                .padding()
+                Spacer()
+                CachedImage(imageName: forecastInfo.image)
+                    .frame(width: 60, height: 60)
+                    .padding(.horizontal, 20)
             }
-            .padding()
-            Spacer()
-            CachedImage(imageName: forecastInfo.image)
-                .frame(width: 60, height: 60)
-                .padding(.horizontal, 20)
+            .accessibilityLabel(forecastInfo.accessibilityDetail)
+            Divider()
         }
     }
 }
 
-struct WeatherCell_Previews: PreviewProvider {
-    static var previews: some View {
-        WeatherCell(forecastInfo: SampleData.sampleDisplayRecord)
+struct SText: View {
+    @State var text: String
+    @Binding var textSize: CGFloat
+    
+    var body: some View {
+        Text(text)
+            .font(.system(size: textSize))
     }
 }

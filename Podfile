@@ -5,6 +5,7 @@ target 'anyweather' do
 
   pod 'Alamofire', '~> 5.5'
   pod 'Kingfisher', '~> 7.0'
+  pod 'DYPopoverView'
 
   target 'anyweatherTests' do
     inherit! :search_paths

@@ -22,5 +22,6 @@ struct SampleData {
                                                                   pressure: "1024",
                                                                   humidity: "36.5",
                                                                   image: "10d",
-                                                                  description: "N/A")
+                                                                  description: "N/A",
+                                                                  accessibilityDetail: "This is a test object")
 }

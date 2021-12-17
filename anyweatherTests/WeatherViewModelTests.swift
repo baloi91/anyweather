@@ -34,10 +34,24 @@ class WeatherViewModelTests: XCTestCase {
     }
     
     func test_transformOutputNotNil() {
-        
+        let sampleWeatherForecast = SampleData.sampleWeatherForecast
+        let output = viewModel.transformData(forecast: sampleWeatherForecast)
+        XCTAssertNotNil(output.date)
+        XCTAssertNotNil(output.temporature)
+        XCTAssertNotNil(output.pressure)
+        XCTAssertNotNil(output.humidity)
+        XCTAssertNotNil(output.description)
+        XCTAssertNotNil(output.image)
+        XCTAssertNotNil(output.accessibilityDetail)
     }
     
     func test_valueResetSuccessful() {
-        
+        viewModel.forecastRecords = [SampleData.sampleDisplayRecord]
+        viewModel.searchText = "dsawq"
+        viewModel.note = "This is a test note"
+        viewModel.clearResult()
+        XCTAssertTrue(viewModel.forecastRecords.isEmpty)
+        XCTAssertTrue(viewModel.searchText.isEmpty)
+        XCTAssertTrue(viewModel.note.isEmpty)
     }
 }

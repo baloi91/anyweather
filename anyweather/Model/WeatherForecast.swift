@@ -29,4 +29,5 @@ struct Temporature: Codable {
 
 struct WFDisplayData {
     let date, temporature, pressure, humidity, image, description: String
+    let accessibilityDetail: String
 }
