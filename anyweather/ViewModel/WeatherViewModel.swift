@@ -15,6 +15,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var showingPopover = false
     @Published var textSize: CGFloat = 14
     @Published var showToast: Bool = false
+    @Published var showLoading: Bool = false
     
     var note: String = ""
     var error: APIError?
@@ -36,6 +37,7 @@ final class WeatherViewModel: ObservableObject {
     }
     
     func fetchForecasts(query: String) {
+        self.showLoading = true
         let params = WeatherParams(query: query)
         sessionManager.getWeatherData(params: params,
                                       completionHandler: { success, response in
@@ -49,6 +51,7 @@ final class WeatherViewModel: ObservableObject {
                 self.error = (response as! APIError)
             }
             self.updateNote()
+            self.showLoading = false
         })
     }
     

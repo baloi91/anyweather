@@ -41,6 +41,7 @@ struct SearchBar: View {
                         }
                     }
                 )
+                .accessibilityLabel(AccessibilityStrings.inputCityField)
             Button(action: {
                 self.isEditing = false
                 viewModel.clearResult()

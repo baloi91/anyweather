@@ -47,6 +47,7 @@ struct WeatherView: View {
             viewModel.showingPopover.toggle()
         }
         .anchorFrame(rect: $navBarPopoverOriginFrame)
+        .accessibilityLabel(AccessibilityStrings.changeTextSizeButton)
     }
 }
 
@@ -70,8 +71,11 @@ struct WeatherBodyView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            List(viewModel.forecastRecords, id: \.date) { forecastInfo in
-                WeatherCell(forecastInfo: forecastInfo, textSize: $viewModel.textSize)
+            List {
+                ForEach(viewModel.forecastRecords, id: \.id) { forecastInfo in
+                    WeatherCell(forecastInfo: forecastInfo, textSize: $viewModel.textSize)
+                    Divider()
+                }
             }
             .onAppear {
                 UITableView.appearance().separatorColor = .clear
@@ -79,6 +83,9 @@ struct WeatherBodyView: View {
         }
         .toast(isPresenting: $viewModel.showToast){
             AlertToast(type: .regular, title: viewModel.note)
+        }
+        .toast(isPresenting: $viewModel.showLoading){
+            AlertToast(type: .loading, title: "Loading...")
         }
         .edgesIgnoringSafeArea(.top)
     }

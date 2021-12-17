@@ -27,7 +27,7 @@ class WeatherViewModelTests: XCTestCase {
     
     func test_fetchErrorWhenQueryRandomString() {
         mockSessionManager.stub = nil
-        mockSessionManager.error = .networkIssue
+        mockSessionManager.error = .invalidCityName
         viewModel.fetchForecasts(query: "equwh")
         XCTAssertTrue(viewModel.forecastRecords.isEmpty)
         XCTAssertNotNil(viewModel.error)

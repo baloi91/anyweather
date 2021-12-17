@@ -27,7 +27,8 @@ struct Temporature: Codable {
     }
 }
 
-struct WFDisplayData {
+struct WFDisplayData: Identifiable {
+    let id: String = UUID().uuidString
     let date, temporature, pressure, humidity, image, description: String
     let accessibilityDetail: String
 }

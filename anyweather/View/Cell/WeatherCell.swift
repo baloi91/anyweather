@@ -28,7 +28,6 @@ struct WeatherCell: View {
                     .padding(.horizontal, 20)
             }
             .accessibilityLabel(forecastInfo.accessibilityDetail)
-            Divider()
         }
     }
 }
