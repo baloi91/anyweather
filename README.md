@@ -48,6 +48,5 @@ X 5. Acceptance Tests
 ✓ 8. Accessibility for Disability Supports:
 	✓ a. VoiceOver: Use a screen reader.
 	✓ b. Scaling Text: Display size and font size: To change the size of items on your screen, adjust the display size or font size.
-X 9. Entity relationship diagram for the database and solution diagrams for the components,
-infrastructure design if any
+X 9. Entity relationship diagram for the database and solution diagrams for the components, infrastructure design if any
 ✓ 10. Readme file
